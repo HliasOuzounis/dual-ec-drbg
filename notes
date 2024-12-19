@@ -1,0 +1,23 @@
+Report:
+    - Why are Random Bit Generators (RBGs) important and what are their main characteristics?
+    - Elliptic Curves:
+        - Basic Theory
+        - How are they used in Cryptography?
+        - Advantages and Disadvantages
+    - Dual_EC_DRBG:
+        - What is it?
+        - How does it work?
+        - Why is it controversial?
+            - Examples of generated random numbers using pi
+        - How can it be exploited?
+    - Custom RBG with backdoor:
+        - How can it be exploited?
+        - How can it be detected?
+    - Reaction from the cryptographic community
+        - Bribing of companies
+
+Diagrams/Graphs:
+    - EC curve
+    - EC discrete points (500)
+    - Discrete logarithm complexity
+    - Dual EC DRBG backdoor bits removal complexity
