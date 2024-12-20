@@ -1,5 +1,8 @@
 from ecdsa.ellipticcurve import Point, CurveFp
+
 import random
+import time
+import matplotlib.pyplot as plt
 
 
 ec_params = {
@@ -84,18 +87,18 @@ def find_possible_seeds(ec_curve, output, next_output, e):
         pred_output = ec_curve.generate(pred_seed)
         if pred_output == next_output:
             possible_seeds.append(pred_seed)
-    
+
+    return possible_seeds
 
 def main():
     global ec_params
     my_ec = MyEC()
     
-    gx = 31415926 # first 9 digits of pi
+    gx = 31415926 # first digit of pi
     gy = square_root_mod_p(gx**3 + ec_params["a"] * gx + ec_params["b"], ec_params["p"])
     
     my_ec.set_P(gx, gy)
 
-    # d = pow(42, 42, my_ec.prime)
     d = 42 * 69 * 111 % my_ec.prime
     e = mod_inverse(d, ec_params["n"])
     
@@ -104,18 +107,44 @@ def main():
 
     assert e * Q == my_ec.P
     
-    for i in range(20):
+    time_taken = []
+    possible_seeds = []
+    max_trunc = 20
+    for i in range(max_trunc + 1):
         ec_params["trunc"] = i
 
         output = my_ec.generate()
         real_seed = my_ec.seed
         next_output = my_ec.generate()
 
+        t = time.time()
         predicted_seeds = find_possible_seeds(my_ec, output, next_output, e)
+        time_taken.append(time.time() - t)
+        possible_seeds.append(len(predicted_seeds))
 
-        print(f"Truncation: {ec_params['trunc']}")
-        print(f"Possible seeds: {predicted_seeds}")
-        print(f"Real seed: {real_seed}")
+        print(f"Truncation: {ec_params['trunc']} bits")
+        assert real_seed in predicted_seeds
+    
+    fig, axs = plt.subplots(1, 1)
+    axs.set_yscale("log")
+    axs.plot(range(len(time_taken)), time_taken)
+    axs.set_xlabel("Truncated Bits")
+    axs.set_ylabel("Time (s)")
+    
+    fig.suptitle("Time taken to find possible seeds")
+    fig.savefig("./report/images/time_find_seeds.png")
+
+    plt.show()
+    
+    fig, axs = plt.subplots(1, 1)
+    axs.plot(range(len(possible_seeds), possible_seeds))
+    axs.set_xlabel("Truncated Bits")
+    axs.set_ylabel("Number of possible seeds")
+    
+    fig.suptitle("Number of possible seeds found")
+    fig.savefig("./report/images/possible_seeds.png")
+    
+    plt.show()
         
 if __name__ == "__main__":
     main()
