@@ -93,6 +93,7 @@
 
 \setmainlanguage{greek}
 \setotherlanguage{english}
+\setmainlanguage{english}
 
 
 \setmainfont{GFS Didot} % Main document font
@@ -102,9 +103,6 @@
 \newfontfamily\greekfont[Script=Greek]{GFS Didot}
 \newfontfamily\greekfontsf[Script=Greek]{GFS Didot}
 
-
-\newcommand{\en}[1]{\foreignlanguage{english}{#1}}
-\newcommand{\gr}[1]{\foreignlanguage{greek}{#1}} % won't need these
 
 %----------------------------------------------------------------------------------------
 %	SECTION TITLES
@@ -135,13 +133,14 @@
 %	CUSTOM COMMANDS
 %----------------------------------------------------------------------------------------
 
-\newcommand{\img}[3][htbp]{%
+\newcommand{\img}[4][htbp]{%
     \begin{figure}[H]
         \centering
         \fcolorbox{black}{white}{\includegraphics[height=#3em]{#2}}
         \ifx&#1&%
         \else
-            \caption{#1}
+        \caption{#1}
+        \label{fig:#4}
         \fi
     \end{figure}
 }

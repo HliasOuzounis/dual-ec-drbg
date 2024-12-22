@@ -11,7 +11,7 @@ ec_params = {
     "b": 123456789,
     "n": 1000008295,
     "trunc": 16,
-    "l": 32, # output bit length
+    "l": 30, # output bit length
 }
 
 class MyEC():
@@ -107,6 +107,13 @@ def main():
 
     assert e * Q == my_ec.P
     
+    print(f"P_x: {my_ec.P.x()}")
+    print(f"P_y: {my_ec.P.y()}")
+    print(f"e: {e}")
+    print(f"Q_x: {Q.x()}")
+    print(f"Q_y: {Q.y()}")
+    exit()
+    
     time_taken = []
     possible_seeds = []
     max_trunc = 20
@@ -132,17 +139,17 @@ def main():
     axs.set_ylabel("Time (s)")
     
     fig.suptitle("Time taken to find possible seeds")
-    fig.savefig("./report/images/time_find_seeds.png")
+    fig.savefig("./images/time-find-seeds.png")
 
     plt.show()
     
     fig, axs = plt.subplots(1, 1)
-    axs.plot(range(len(possible_seeds), possible_seeds))
+    axs.plot(range(len(possible_seeds)), possible_seeds)
     axs.set_xlabel("Truncated Bits")
     axs.set_ylabel("Number of possible seeds")
     
     fig.suptitle("Number of possible seeds found")
-    fig.savefig("./report/images/possible_seeds.png")
+    fig.savefig("./images/possible-seeds.png")
     
     plt.show()
         

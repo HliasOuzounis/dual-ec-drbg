@@ -1,0 +1,100 @@
+\section{Elliptic Curves}
+
+\subsection{Definition}
+
+Elliptic curves are a fascinating family of algebraic curves. They are defined by a simple equation \eqref{eq:elliptic-curve} but have a very complex structure and, unpredictably, a lot of applications in number theory.
+
+\begin{gather}
+    y^2 = x^3 + \alpha x + \beta \label{eq:elliptic-curve}
+\end{gather}
+
+\img[The two forms of an elliptic curve.]{images/elliptic-curves.png}{20}{elliptic-curves}
+
+Figure \ref{fig:elliptic-curves} shows the two forms of an elliptic curve. It is important to note the lateral symmetry of the curves over the x-axis. Furthermore, depending on the values of $\alpha$ and $\beta$, the curve can have either one or two components. It is dependant on the discriminant of the curve calculated as $\Delta = -16(4\alpha^3 + 27\beta^2)$. If $\Delta < 0$, the curve has two disconnected components and when $\Delta > 0$, the curve is one continuous line. When $\Delta = 0$, the elliptic curve is called degenerate and it loses many of its useful properties. We won't be focusing on elliptic curves with $\Delta = 0$.
+
+\subsection{Point Addition}
+
+We can define an operation on the points of an elliptic curve called point addition. Given two different points $P = (x_P, y_P)$ and $Q = (x_Q, y_Q)$ on the curve we can define $R = P + Q$, another point on the curve as follows:
+\\
+
+Draw the line that passes through $P$ and $Q$. This line will intersect the curve another point $-R = (x_R, -y_R)$. We take $R = (x_R, y_R)$ as the reflection of $-R$ over the x-axis. 
+
+\img[Point addition on an elliptic curve.]{images/point-addition.png}{25}{point-addition}
+
+More formally, the slope of the line passing through $P$ and $Q$ is:
+\begin{gather}
+    m = \frac{y_Q - y_P}{x_Q - x_P}
+\end{gather} 
+Then the third point on the line that intersects the elliptic curve has coordinates \cite{enigbe_elliptic_curve_dlp}:
+\begin{align}
+    x_R &= m^Q - x_P - x_Q \\
+    -y_R &= m(x_P - x_R) - y_P
+\end{align}
+
+Finally, we reflect that point over the x-axis to get $R = P + Q$.
+
+\begin{gather}
+    y_R = -(-y_R)
+\end{gather}
+
+If $Q = -P$, then we can't calculate $m$ as $x_Q = x_P$ and the line that passes through them is parallel to the y-axis and does not intersect the curve at any other point. In this case, we define $P + (-P) = \mathcal{O}$, the point at infinity.
+
+\img[Point at infinity.]{images/point-at-infinity.png}{25}{point-at-infinity}
+
+\subsection{Point Doubling}
+
+If $P = Q$, we can't uniquely define a line that passes through a single point. Instead we take the tangent line at $P$ and find the $R$ as the reflection of the intersection of the tangent line with the curve over the x-axis in a similar way as before.
+
+\img[Point doubling on an elliptic curve.]{images/point-doubling.png}{25}{point-doubling}
+
+The slope of the tangent line at $P$ is \cite{enigbe_elliptic_curve_dlp}:
+\begin{gather}
+    m = \frac{3x_P^2 + \alpha}{2y_P}
+\end{gather}
+
+The coordinates of the third point on the line that intersects the curve are:
+\begin{align}
+    x_R &= m^2 - 2x_P \\
+    -y_R &= m(x_P - x_R) - y_P
+\end{align}
+
+And finally, we reflect that point over the x-axis to get $R = P + P$.
+
+\begin{gather}
+    y_R = -(-y_R)
+\end{gather}
+
+From these two definitions we can now define multiplication of a point by a scalar $k$ as a series of point additions and doublings
+\begin{gather}
+    kP = P + P + \ldots + P
+\end{gather}
+
+\subsection{Elliptic Curves over Finite Fields}
+
+Elliptic curves are normally defined over the real numbers but the true power of the properties of the elliptic curves is revealed when we examine them under the lens of a finite field $\mathbb{F}_p$.
+\\
+
+A finite field $mathbb{F}_p$ is a set of integers under addition and multiplication modulo $p$ where $p$ is a prime number. This field, along with the points operations defined in the previous section, form a group $E(\mathbb{F}_p)$. The members of this group are all the points with integer coordinates that satisfy the elliptic curve equation under the operations of the field $\mathbb{F}_p$.
+
+\begin{gather}
+    y^2 \equiv x^3 + \alpha x + \beta \mod p, \quad x, y \in \mathbb{F}_p
+\end{gather}
+
+As a group, $E(\mathbb{F}_p)$ needs to have an identity element, $P + e = P$ for all $P \in E(\mathbb{F}_p)$. We take the point at infinity $\mathcal{O}$ as the identity element of the group. This way we can also define the inverse of a point $P$ as $P + (-P) = \mathcal{O}$.
+
+\img[Points of $E(\mathbb{F}_p)$ with $p = 103$.]{images/ec.png}{25}{ec}
+
+As we can see from Figure \ref{fig:ec}, even though the points are distributed in a seemingly random way, we still have a symmetrical structure, now over the line $y = \frac{p - 1}{2}$.
+
+\subsection{Discrete Logarithm Problem on Elliptic Curves}
+With an elliptic curve over a finite field defined, we can now understand how elliptic curves are used in cryptography. The basis for the usage of elliptic curves is that given a point $Q$, it is really hard to find the scalar $k$ such that $Q = kP$, where $P$ is a publicly known point of the curve. As shown in Figure \ref{fig:ec-dlp}, the changes in $kP$ as $k$ varies are sporadic and unpredictable.
+
+\img[Discrete Logarithm Problem on Elliptic Curves.]{images/ec-arrow.png}{25}{ec-dlp}
+
+This is called the discrete logarithm problem on elliptic curves and is what makes elliptic curves a good candidate for systems where key security is paramount, such as in bitcoin \cite{wang2018ecdsa}. The elliptic curve, the field $\mathbb{F}_p$ and the generator point $P$ are all publicly known and the key is the scalar $k$ that is kept secret.
+\\
+
+The best known algorithms for solving the discrete logarithm problem on elliptic curves are all $O(\sqrt{n})$ where $n$ is the order of the cyclic group $\left\{P, 2P, \dots nP \right\}$ where $nP = \mathcal{O}$. The elliptic curve and $P$ are usually selected in a way that $n \approx p$. For the large primes, on the order of $2^{256}$, this is a computationally infeasible problem to solve. Because the best known algorithms are only $O(\sqrt{n})$, elliptic curves can be as secure as other cryptographic systems such as RSA, but with much smaller key sizes. In fact, a 256-bit elliptic curve key is considered to be as secure as a 3072-bit RSA key \cite{elliptic_curve_cryptography}.
+\\
+
+With all these tools at our disposal, we can now move on to the analysis of the Dual EC DRBG algorithm.

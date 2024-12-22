@@ -1,0 +1,53 @@
+\section{Custom Dual EC DRBG Backdoor}
+
+\subsection{Custom Backdoor}
+
+To showcase the severity of the backdoor analyzed in the previous sections, we can alter the parameters of the Dual EC DRBG algorithm to insert our own backdoor. By selecting a specific $k$, we can construct our own $Q = kP$ point and utilize it as our backdoor.
+\\
+
+For example, we select $k = 0x1234567890abcdef_{16}$. Then $Q = kP$ is set to:
+\begin{align*}
+    Q_x &= 9fad84aeae08bbef7f010014d82cef6a09de2b0cf871b5ce0c4f1d13a59a5934_{16}\\
+    Q_y &= 7cb45769f1070e2c2470fe5b1bfe63133c0b0cdc64ea4bf3791a8ec2a07fd4f_{16}
+\end{align*}
+\noindent
+Additionally, we need to compute $e$ such that $P = eQ$ to be able to reverse the process and find the seed $s_{i + 1}$ from an output.
+\begin{align*}
+    e &= k^{-1} \mod n\\
+    e &= cadfd3dfd056ea711348f294745e8a9644e7e4d7d3d90b744781eac483b929fe_{16}
+\end{align*}
+
+\noindent
+With this "new" Dual EC DRBG algorithm, we can generate a random value and recreate it using the backdoor.
+\\
+
+\noindent
+For example, let's seed the generator with $s_0 = 0x42$. The output $t_0$ is:
+\begin{align*}
+    t_0 = 7a8ac253a35c39494fff582e706fb8f815c7571e183c068f99449c6c2291_{16}
+\end{align*}
+and the new seed $s_1$ is:
+\begin{align*}
+    s_1 = b819dc3f7ac644a4edadaa7e65e520bcbe8f494d29e0fbfb5b96ebf10baf2a28_{16}
+\end{align*}
+but we will consider it hidden to an outside attacker. The attacker has only access to the output bits $t_0$ and has knowledge of the parameters of the elliptic curve as well as the backdoor $Q$ and $e$.
+\\
+
+By having the truncated bits of the output, the attacker can try all possible values of $o_0 = x_i | t_0$ to try and fill the truncated bits. $x_i$ takes all the possible values from $0$ to $2^{16} - 1$ and is considered the truncated bits of the output. There are $2^{16}$ total values to be checked. However, the attacker knows that the output is the x coordinate of a point on the elliptic curve. This means that if $x_i | t_0$ does not correspond to the x coordinate of an elliptic curve point, it can be discarded. This halves the number of values needed to check from $2^{16}$ to $32722 \approx 2^{15}$ in this example. From these candidate points, $A_i$, the possible seeds are then calculated as $s_{i + 1} = (eA_i).x$. The attacker is left with a small number of possible seeds that can be utilized to predict candidate future outputs.
+\\
+
+In fact, if the attacker also has access to the next output $t_1$, they can use the candidate seeds from $t_0$ to try and generate $t_1^\prime$ themselves. If the generated $t_1^\prime$ matches the actual $t_1$, they can narrow the possible seeds even further. For $16$ truncated bits of output, it is actually enough to narrow the possible seeds down to just one. This means that the attacker can predict all future outputs of the generator.
+\\
+
+The argument to increase the truncated bits, stems from the computational increase that is introduced with each new bit cut off. Trying different truncation sizes and plotting the time needed to find all the possible seeds in a logarithmic scale, we can clearly see that the complexity increases exponentially as shown in Figure \ref{fig:truncation-time}. This makes sense since removing one bit from the output increases the number of possible values to check by a factor of $2$.
+
+\img[Time taken to find all possible seeds for different truncation sizes]{./images/time-find-seeds-dual-ec-drbg.png}{25}{truncation-time}
+
+Just 3 minutes are enough for a standard commercial laptop to find all the candidate seeds. For a larger truncation, $128$ bits for example as has been proposed in \cite{backdoor}, the attacker would need to check $2^{112} \approx 10^{38}$ seed values which would take an enormous amount of time and would make the backdoor practically useless. By increasing the percentage of bits truncated, it also harder to pinpoint the exact seed, even if the attacker knows the next output.
+\\
+
+To confirm this, we construct a smaller elliptic curve over a field with $p = 10^9 + 7$, to make the computations faster and be able to truncate and test a larger percentage of bits. All the numbers in the field $\mathbb{F}_p$ are smaller than $p$ and as such can be represented with $30$ bits. This is the maximum size of the output.
+Additionally, to define the elliptic curve, we take $a = -3$ and $b = 123456789$. The order of the curve is $n = 1000008295$, calculated using sagemath \cite{sagemath} and the selected generator point $P = (31415926, 725920279)$ has the same order. The backdoor is set with $k = 42 * 69 * 111$, $e = k^{-1} = 99451207$ and $Q = kP = (657403560, 363572734)$. As the truncated bits increase, we can see the same exponential time complexity in Figure \ref{fig:truncation-time-small}. The number of possible seeds even if the attacker knows the next output also increases exponentially after a certain point as shown in Figure \ref{fig:truncation-seeds-small}. This is the reason the backdoor is considered secure for a large enough truncation size.
+
+\img[Time taken to find all possible seeds for different truncation sizes on a smaller elliptic curve]{./images/time-find-seeds.png}{25}{truncation-time-small}
+\img[Number of possible seeds for different truncation sizes on a smaller elliptic curve]{./images/possible-seeds.png}{25}{truncation-seeds-small}
