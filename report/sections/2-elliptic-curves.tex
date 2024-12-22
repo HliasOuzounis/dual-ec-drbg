@@ -21,6 +21,7 @@ Draw the line that passes through $P$ and $Q$. This line will intersect the curv
 
 \img[Point addition on an elliptic curve.]{images/point-addition.png}{25}{point-addition}
 
+\noindent
 More formally, the slope of the line passing through $P$ and $Q$ is:
 \begin{gather}
     m = \frac{y_Q - y_P}{x_Q - x_P}
@@ -30,9 +31,7 @@ Then the third point on the line that intersects the elliptic curve has coordina
     x_R &= m^Q - x_P - x_Q \\
     -y_R &= m(x_P - x_R) - y_P
 \end{align}
-
 Finally, we reflect that point over the x-axis to get $R = P + Q$.
-
 \begin{gather}
     y_R = -(-y_R)
 \end{gather}
@@ -47,19 +46,17 @@ If $P = Q$, we can't uniquely define a line that passes through a single point. 
 
 \img[Point doubling on an elliptic curve.]{images/point-doubling.png}{25}{point-doubling}
 
+\noindent
 The slope of the tangent line at $P$ is \cite{enigbe_elliptic_curve_dlp}:
 \begin{gather}
     m = \frac{3x_P^2 + \alpha}{2y_P}
 \end{gather}
-
 The coordinates of the third point on the line that intersects the curve are:
 \begin{align}
     x_R &= m^2 - 2x_P \\
     -y_R &= m(x_P - x_R) - y_P
 \end{align}
-
 And finally, we reflect that point over the x-axis to get $R = P + P$.
-
 \begin{gather}
     y_R = -(-y_R)
 \end{gather}
@@ -74,7 +71,7 @@ From these two definitions we can now define multiplication of a point by a scal
 Elliptic curves are normally defined over the real numbers but the true power of the properties of the elliptic curves is revealed when we examine them under the lens of a finite field $\mathbb{F}_p$.
 \\
 
-A finite field $mathbb{F}_p$ is a set of integers under addition and multiplication modulo $p$ where $p$ is a prime number. This field, along with the points operations defined in the previous section, form a group $E(\mathbb{F}_p)$. The members of this group are all the points with integer coordinates that satisfy the elliptic curve equation under the operations of the field $\mathbb{F}_p$.
+A finite field $\mathbb{F}_p$ is a set of integers under addition and multiplication modulo $p$ where $p$ is a prime number. This field, along with the points operations defined in the previous section, form a group $E(\mathbb{F}_p)$. The members of this group are all the points with integer coordinates that satisfy the elliptic curve equation under the operations of the field $\mathbb{F}_p$.
 
 \begin{gather}
     y^2 \equiv x^3 + \alpha x + \beta \mod p, \quad x, y \in \mathbb{F}_p
@@ -89,7 +86,7 @@ As we can see from Figure \ref{fig:ec}, even though the points are distributed i
 \subsection{Discrete Logarithm Problem on Elliptic Curves}
 With an elliptic curve over a finite field defined, we can now understand how elliptic curves are used in cryptography. The basis for the usage of elliptic curves is that given a point $Q$, it is really hard to find the scalar $k$ such that $Q = kP$, where $P$ is a publicly known point of the curve. As shown in Figure \ref{fig:ec-dlp}, the changes in $kP$ as $k$ varies are sporadic and unpredictable.
 
-\img[Discrete Logarithm Problem on Elliptic Curves.]{images/ec-arrow.png}{25}{ec-dlp}
+\img[Points for increasing values of $k$. Point $P$ is shown in green]{images/ec-arrow.png}{25}{ec-dlp}
 
 This is called the discrete logarithm problem on elliptic curves and is what makes elliptic curves a good candidate for systems where key security is paramount, such as in bitcoin \cite{wang2018ecdsa}. The elliptic curve, the field $\mathbb{F}_p$ and the generator point $P$ are all publicly known and the key is the scalar $k$ that is kept secret.
 \\
