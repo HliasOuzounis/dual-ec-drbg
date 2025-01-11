@@ -28,7 +28,7 @@ More formally, the slope of the line passing through $P$ and $Q$ is:
 \end{gather} 
 Then the third point on the line that intersects the elliptic curve has coordinates \cite{enigbe_elliptic_curve_dlp}:
 \begin{align}
-    x_R &= m^Q - x_P - x_Q \\
+    x_R &= m_Q - x_P - x_Q \\
     -y_R &= m(x_P - x_R) - y_P
 \end{align}
 Finally, we reflect that point over the x-axis to get $R = P + Q$.
@@ -71,7 +71,7 @@ From these two definitions we can now define multiplication of a point by a scal
 Elliptic curves are normally defined over the real numbers but the true power of the properties of the elliptic curves is revealed when we examine them under the lens of a finite field $\mathbb{F}_p$.
 \\
 
-A finite field $\mathbb{F}_p$ is a set of integers under addition and multiplication modulo $p$ where $p$ is a prime number. This field, along with the points operations defined in the previous section, form a group $E(\mathbb{F}_p)$. The members of this group are all the points with integer coordinates that satisfy the elliptic curve equation under the operations of the field $\mathbb{F}_p$.
+A finite field $\mathbb{F}_p$ is a set of integers under addition and multiplication modulo $p$ where $p$ is usually a prime number. This field, along with the points operations defined in the previous section, form a group $E(\mathbb{F}_p)$. The members of this group are all the points with integer coordinates that satisfy the elliptic curve equation under the operations of the field $\mathbb{F}_p$.
 
 \begin{gather}
     y^2 \equiv x^3 + \alpha x + \beta \mod p, \quad x, y \in \mathbb{F}_p
