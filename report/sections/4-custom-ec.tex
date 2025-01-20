@@ -46,6 +46,8 @@ The argument to increase the truncated bits, stems from the computational increa
 Just 3 minutes are enough for a standard commercial laptop to find all the candidate seeds. For a larger truncation, $128$ bits for example as has been proposed in \cite{backdoor}, the attacker would need to check $2^{127} \approx 10^{38}$ seed values which would take an enormous amount of time and would make the backdoor practically useless. By increasing the percentage of bits truncated, it also harder to pinpoint the exact seed, even if the attacker knows the next output.
 \\
 
+\subsection{Custom Backdoor on a Smaller Elliptic Curve}
+
 To confirm this, we construct a smaller elliptic curve over a field with $p = 10^9 + 7$, to make the computations faster and be able to truncate and test a larger percentage of bits. All the numbers in the field $\mathbb{F}_p$ are smaller than $p$ and as such can be represented with $30$ bits. This is the maximum size of the output.
 \\
 
